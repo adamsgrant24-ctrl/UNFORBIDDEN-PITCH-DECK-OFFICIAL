@@ -1,20 +1,20 @@
 
-import React, { useState, useEffect } from 'react';
-import Header from './components/Header';
-import Hero from './components/Hero';
-import Vision from './components/Vision';
-import Ensemble from './components/Ensemble';
-import Methodology from './components/Methodology';
-import Revenue from './components/Revenue';
-import TechnicalAudit from './components/TechnicalAudit';
-import InvestorBrief from './components/InvestorBrief';
-import Footer from './components/Footer';
+import React, { useState } from 'react';
+import Header from './components/Header.tsx';
+import Hero from './components/Hero.tsx';
+import Vision from './components/Vision.tsx';
+import Ensemble from './components/Ensemble.tsx';
+import Methodology from './components/Methodology.tsx';
+import Revenue from './components/Revenue.tsx';
+import TechnicalAudit from './components/TechnicalAudit.tsx';
+import InvestorBrief from './components/InvestorBrief.tsx';
+import Footer from './components/Footer.tsx';
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState('home');
 
   return (
-    <div className="min-h-screen selection:bg-white selection:text-black">
+    <div className="min-h-screen selection:bg-white selection:text-black bg-[#050505]">
       <Header activeTab={activeTab} setActiveTab={setActiveTab} />
       
       <main className="pt-20">

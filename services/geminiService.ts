@@ -1,11 +1,15 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-const getAI = () => new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-
 export const generateCinematicImage = async (prompt: string): Promise<string | null> => {
-  const ai = getAI();
   try {
+    // Only proceed if the API key is present to avoid runtime initialization errors in the browser
+    if (!process.env.API_KEY) {
+      console.warn("API_KEY environment variable is not defined. AI image generation skipped.");
+      return null;
+    }
+
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash-image',
       contents: {
@@ -22,11 +26,17 @@ export const generateCinematicImage = async (prompt: string): Promise<string | n
       }
     });
 
-    for (const part of response.candidates?.[0]?.content?.parts || []) {
+    if (!response || !response.candidates || response.candidates.length === 0) {
+      return null;
+    }
+
+    const parts = response.candidates[0].content.parts;
+    for (const part of parts) {
       if (part.inlineData) {
         return `data:image/png;base64,${part.inlineData.data}`;
       }
     }
+    
     return null;
   } catch (error) {
     console.error("Image generation failed:", error);
