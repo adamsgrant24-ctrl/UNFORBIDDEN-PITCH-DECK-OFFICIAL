@@ -1,16 +1,21 @@
 
 import React, { useState, useEffect } from 'react';
-import { generateCinematicImage } from '../services/geminiService';
+import { generateCinematicImage } from '../services/geminiService.tsx';
 
 const Methodology: React.FC = () => {
   const [studioImage, setStudioImage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchImg = async () => {
-      const img = await generateCinematicImage(
-        "A messy artist's studio in Woodstock with charcoal dust, oil paintings, and warm amber flickering light, 35mm anamorphic"
-      );
-      setStudioImage(img);
+      try {
+        const img = await generateCinematicImage(
+          "A messy artist's studio in Woodstock with charcoal dust, oil paintings, and warm amber flickering light, 35mm anamorphic"
+        );
+        setStudioImage(img);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchImg();
   }, []);
@@ -53,7 +58,7 @@ const Methodology: React.FC = () => {
               {studioImage ? (
                 <img src={studioImage} alt="Woodstock Studio" className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full bg-white/5 animate-pulse" />
+                <div className={`w-full h-full ${loading ? 'bg-white/5 animate-pulse' : 'bg-gradient-to-br from-orange-950/20 to-black'}`} />
               )}
               <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent" />
               <div className="absolute bottom-12 left-12 max-w-sm">

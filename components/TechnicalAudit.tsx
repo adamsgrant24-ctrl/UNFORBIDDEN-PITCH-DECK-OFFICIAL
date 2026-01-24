@@ -1,16 +1,21 @@
 
 import React, { useState, useEffect } from 'react';
-import { generateCinematicImage } from '../services/geminiService';
+import { generateCinematicImage } from '../services/geminiService.tsx';
 
 const TechnicalAudit: React.FC = () => {
   const [techImage, setTechImage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchImg = async () => {
-      const img = await generateCinematicImage(
-        "Macro shot of a high-end anamorphic ARRI camera lens, light hitting the glass elements, technical blue light flares, 35mm anamorphic aesthetic"
-      );
-      setTechImage(img);
+      try {
+        const img = await generateCinematicImage(
+          "Macro shot of a high-end anamorphic ARRI camera lens, light hitting the glass elements, technical blue light flares, 35mm anamorphic aesthetic"
+        );
+        setTechImage(img);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchImg();
   }, []);
@@ -48,7 +53,7 @@ const TechnicalAudit: React.FC = () => {
             {techImage ? (
               <img src={techImage} alt="Technical Rigour" className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-all duration-1000" />
             ) : (
-              <div className="w-full h-full bg-white/5 animate-pulse" />
+              <div className={`w-full h-full ${loading ? 'bg-white/5 animate-pulse' : 'bg-gradient-to-b from-blue-900/10 to-black'}`} />
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
             <div className="absolute bottom-8 left-8">

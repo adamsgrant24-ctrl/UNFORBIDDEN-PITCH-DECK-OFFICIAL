@@ -1,7 +1,17 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { generateCinematicImage } from '../services/geminiService.tsx';
 
-const characters = [
+interface Character {
+  name: string;
+  talent: string;
+  role: string;
+  description: string;
+  tagline: string;
+  imageUrl: string | null;
+}
+
+const characters: Character[] = [
   {
     name: "LUKE",
     talent: "Teboho Mzisa",
@@ -52,6 +62,66 @@ const characters = [
   }
 ];
 
+const CharacterCard: React.FC<{ char: Character }> = ({ char }) => {
+  const [displayUrl, setDisplayUrl] = useState<string | null>(char.imageUrl);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [hasError, setHasError] = useState(false);
+
+  const handleImageError = async () => {
+    if (hasError) return; // Prevent infinite loops
+    setHasError(true);
+    setIsGenerating(true);
+    
+    const aiImage = await generateCinematicImage(
+      `A moody cinematic portrait of actor ${char.talent} playing the role of ${char.name}, ${char.description}. Low lighting, anamorphic lens flares, high contrast noir aesthetic.`,
+      "3:4"
+    );
+    
+    if (aiImage) {
+      setDisplayUrl(aiImage);
+    }
+    setIsGenerating(false);
+  };
+
+  return (
+    <div className="group relative overflow-hidden aspect-[3/4] glass-panel rounded-xl border border-white/5">
+      {displayUrl ? (
+        <img 
+          src={displayUrl} 
+          alt={char.name} 
+          onError={handleImageError}
+          className={`absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 ${isGenerating ? 'opacity-20 animate-pulse' : 'opacity-60 group-hover:opacity-80'}`}
+        />
+      ) : (
+        <div className="absolute inset-0 bg-white/5 flex items-center justify-center">
+           <span className="text-white/10 font-serif text-8xl select-none">{char.name[0]}</span>
+        </div>
+      )}
+
+      {isGenerating && (
+        <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin mb-4" />
+          <div className="text-[8px] tracking-[0.4em] text-white/60 font-bold uppercase">AI VISION SYNTHESIS...</div>
+        </div>
+      )}
+      
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent z-10" />
+      
+      <div className="absolute bottom-0 left-0 right-0 p-8 z-20 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+        <div className="text-[10px] tracking-widest text-white/50 mb-2 font-bold uppercase">{char.role}</div>
+        <h3 className="text-2xl font-serif mb-1">{char.name}</h3>
+        <div className="text-sm text-white/40 mb-4 italic">{char.talent}</div>
+        <p className="text-xs text-white/60 mb-6 leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-500 max-h-0 group-hover:max-h-24 overflow-hidden">
+          {char.description}
+        </p>
+        <div className="inline-block border border-white/20 px-3 py-1 rounded text-[10px] tracking-widest text-white font-bold">
+          {char.tagline}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Ensemble: React.FC = () => {
   return (
     <section id="ensemble" className="py-24 bg-white/[0.02]">
@@ -63,33 +133,7 @@ const Ensemble: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {characters.map((char) => (
-            <div key={char.name} className="group relative overflow-hidden aspect-[3/4] glass-panel rounded-xl border border-white/5">
-              {char.imageUrl ? (
-                <img 
-                  src={char.imageUrl} 
-                  alt={char.name} 
-                  className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 opacity-60 group-hover:opacity-80"
-                />
-              ) : (
-                <div className="absolute inset-0 bg-white/5 group-hover:bg-white/10 transition-colors flex items-center justify-center">
-                  <span className="text-white/10 font-serif text-8xl select-none opacity-20">{char.name[0]}</span>
-                </div>
-              )}
-              
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent z-10" />
-              
-              <div className="absolute bottom-0 left-0 right-0 p-8 z-20 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                <div className="text-[10px] tracking-widest text-white/50 mb-2 font-bold uppercase">{char.role}</div>
-                <h3 className="text-2xl font-serif mb-1">{char.name}</h3>
-                <div className="text-sm text-white/40 mb-4 italic">{char.talent}</div>
-                <p className="text-xs text-white/60 mb-6 leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-500 max-h-0 group-hover:max-h-24 overflow-hidden">
-                  {char.description}
-                </p>
-                <div className="inline-block border border-white/20 px-3 py-1 rounded text-[10px] tracking-widest text-white font-bold">
-                  {char.tagline}
-                </div>
-              </div>
-            </div>
+            <CharacterCard key={char.name} char={char} />
           ))}
         </div>
       </div>

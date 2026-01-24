@@ -1,16 +1,21 @@
 
 import React, { useState, useEffect } from 'react';
-import { generateCinematicImage } from '../services/geminiService';
+import { generateCinematicImage } from '../services/geminiService.tsx';
 
 const Vision: React.FC = () => {
   const [visionImage, setVisionImage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchImg = async () => {
-      const img = await generateCinematicImage(
-        "A conceptual architectural visualization of a glass prison floating in a dark, infinite void. Minimalist, neon blue accents, high contrast, cinematic lighting, anamorphic."
-      );
-      setVisionImage(img);
+      try {
+        const img = await generateCinematicImage(
+          "A conceptual architectural visualization of a glass prison floating in a dark, infinite void. Minimalist, neon blue accents, high contrast, cinematic lighting, anamorphic."
+        );
+        setVisionImage(img);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchImg();
   }, []);
@@ -51,9 +56,9 @@ const Vision: React.FC = () => {
             {visionImage ? (
               <img src={visionImage} alt="The Invincible Prison" className="w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity duration-1000" />
             ) : (
-              <div className="w-full h-full bg-white/5 animate-pulse" />
+              <div className={`w-full h-full ${loading ? 'bg-white/5 animate-pulse' : 'bg-gradient-to-br from-blue-950 to-black'}`} />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
             <div className="absolute bottom-8 left-8">
                <div className="text-[10px] tracking-widest text-white/40 mb-1 font-bold uppercase">Concept Audit</div>
                <div className="text-lg font-serif">The Invincible Prison</div>

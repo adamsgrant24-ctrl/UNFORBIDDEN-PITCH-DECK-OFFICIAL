@@ -1,16 +1,21 @@
 
 import React, { useState, useEffect } from 'react';
-import { generateCinematicImage } from '../services/geminiService';
+import { generateCinematicImage } from '../services/geminiService.tsx';
 
 const Revenue: React.FC = () => {
   const [revenueImage, setRevenueImage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchImg = async () => {
-      const img = await generateCinematicImage(
-        "A high-end modern art gallery at night, massive charcoal drawings on white walls, cold lighting, symmetrical composition, 35mm film frame"
-      );
-      setRevenueImage(img);
+      try {
+        const img = await generateCinematicImage(
+          "A high-end modern art gallery at night, massive charcoal drawings on white walls, cold lighting, symmetrical composition, 35mm film frame"
+        );
+        setRevenueImage(img);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchImg();
   }, []);
@@ -39,7 +44,7 @@ const Revenue: React.FC = () => {
               {revenueImage ? (
                 <img src={revenueImage} alt="Art Asset Visualization" className="w-full h-full object-cover opacity-40 hover:opacity-60 transition-opacity duration-1000" />
               ) : (
-                <div className="w-full h-full bg-white/5 animate-pulse" />
+                <div className={`w-full h-full ${loading ? 'bg-white/5 animate-pulse' : 'bg-gradient-to-br from-white/5 to-black'}`} />
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent" />
               <div className="absolute bottom-6 left-6">

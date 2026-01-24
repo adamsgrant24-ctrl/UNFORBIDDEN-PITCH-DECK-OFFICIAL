@@ -1,16 +1,21 @@
 
 import React, { useState, useEffect } from 'react';
-import { generateCinematicImage } from '../services/geminiService';
+import { generateCinematicImage } from '../services/geminiService.tsx';
 
 const InvestorBrief: React.FC = () => {
   const [boardroomImage, setBoardroomImage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchImg = async () => {
-      const img = await generateCinematicImage(
-        "A minimalist luxury penthouse boardroom at dusk, floor-to-ceiling glass windows overlooking a dark city, 35mm cinematic lighting, cold blue tones"
-      );
-      setBoardroomImage(img);
+      try {
+        const img = await generateCinematicImage(
+          "A minimalist luxury penthouse boardroom at dusk, floor-to-ceiling glass windows overlooking a dark city, 35mm cinematic lighting, cold blue tones"
+        );
+        setBoardroomImage(img);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchImg();
   }, []);
@@ -19,9 +24,12 @@ const InvestorBrief: React.FC = () => {
     <section id="investor" className="py-24 px-6 bg-[#0a0a0a] relative overflow-hidden">
       {boardroomImage && (
         <div 
-          className="absolute inset-0 bg-cover bg-center opacity-10 pointer-events-none"
+          className="absolute inset-0 bg-cover bg-center opacity-10 pointer-events-none transition-opacity duration-1000"
           style={{ backgroundImage: `url(${boardroomImage})` }}
         />
+      )}
+      {!boardroomImage && !loading && (
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/5 to-black pointer-events-none" />
       )}
       
       <div className="max-w-5xl mx-auto relative z-10">
