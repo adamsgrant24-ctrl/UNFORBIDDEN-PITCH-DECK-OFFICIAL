@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { generateCinematicImage } from '../services/geminiService.tsx';
 
-const TechnicalAudit: React.FC = () => {
-  const [techImage, setTechImage] = useState<string | null>(null);
+const TechnicalAudit = () => {
+  const [techImage, setTechImage] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -13,6 +13,8 @@ const TechnicalAudit: React.FC = () => {
           "Macro shot of a high-end anamorphic ARRI camera lens, light hitting the glass elements, technical blue light flares, 35mm anamorphic aesthetic"
         );
         setTechImage(img);
+      } catch (err) {
+        console.error(err);
       } finally {
         setLoading(false);
       }

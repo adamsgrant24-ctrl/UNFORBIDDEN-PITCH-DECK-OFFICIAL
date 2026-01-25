@@ -1,17 +1,8 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { generateCinematicImage } from '../services/geminiService.tsx';
 
-interface Character {
-  name: string;
-  talent: string;
-  role: string;
-  description: string;
-  tagline: string;
-  imageUrl: string | null;
-}
-
-const characters: Character[] = [
+const characters = [
   {
     name: "LUKE",
     talent: "Teboho Mzisa",
@@ -62,59 +53,64 @@ const characters: Character[] = [
   }
 ];
 
-const CharacterCard: React.FC<{ char: Character }> = ({ char }) => {
-  const [displayUrl, setDisplayUrl] = useState<string | null>(char.imageUrl);
+// Fix: Use 'any' type for props to resolve the issue where 'key' is not recognized on the inferred prop type
+const CharacterCard = ({ char }: any) => {
+  const [displayUrl, setDisplayUrl] = useState(char.imageUrl);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [hasError, setHasError] = useState(false);
+  const [failedOnce, setFailedOnce] = useState(false);
 
   const handleImageError = async () => {
-    if (hasError) return; // Prevent infinite loops
-    setHasError(true);
+    if (failedOnce || isGenerating) return;
+    setFailedOnce(true);
     setIsGenerating(true);
     
-    const aiImage = await generateCinematicImage(
-      `A moody cinematic portrait of actor ${char.talent} playing the role of ${char.name}, ${char.description}. Low lighting, anamorphic lens flares, high contrast noir aesthetic.`,
-      "3:4"
-    );
-    
-    if (aiImage) {
-      setDisplayUrl(aiImage);
+    try {
+      const prompt = `Noir portrait of ${char.talent} as ${char.name}, highly cinematic lighting, deep shadows, 35mm film grain.`;
+      const aiImage = await generateCinematicImage(prompt, "3:4");
+      if (aiImage) setDisplayUrl(aiImage);
+    } catch (err) {
+      console.error("Ensemble card regeneration failed:", err);
+    } finally {
+      setIsGenerating(false);
     }
-    setIsGenerating(false);
   };
 
   return (
-    <div className="group relative overflow-hidden aspect-[3/4] glass-panel rounded-xl border border-white/5">
+    <div className="group relative overflow-hidden aspect-[3/4] glass-panel rounded-2xl border border-white/5 bg-[#0a0a0a]">
       {displayUrl ? (
         <img 
           src={displayUrl} 
           alt={char.name} 
           onError={handleImageError}
-          className={`absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 ${isGenerating ? 'opacity-20 animate-pulse' : 'opacity-60 group-hover:opacity-80'}`}
+          className={`absolute inset-0 w-full h-full object-cover grayscale brightness-[0.7] group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-1000 ${isGenerating ? 'opacity-20 blur-xl' : 'opacity-60 group-hover:opacity-100'}`}
         />
       ) : (
-        <div className="absolute inset-0 bg-white/5 flex items-center justify-center">
-           <span className="text-white/10 font-serif text-8xl select-none">{char.name[0]}</span>
+        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-white/[0.03] to-transparent">
+           <span className="text-white/5 font-serif text-9xl select-none">{char.name[0]}</span>
         </div>
       )}
 
       {isGenerating && (
         <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin mb-4" />
-          <div className="text-[8px] tracking-[0.4em] text-white/60 font-bold uppercase">AI VISION SYNTHESIS...</div>
+          <div className="w-16 h-[0.5px] bg-white/40 animate-pulse mb-6" />
+          <div className="text-[7px] tracking-[1em] text-white/60 font-bold uppercase animate-pulse">
+            Splicing Data
+          </div>
         </div>
       )}
       
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent z-10" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent z-10" />
       
-      <div className="absolute bottom-0 left-0 right-0 p-8 z-20 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-        <div className="text-[10px] tracking-widest text-white/50 mb-2 font-bold uppercase">{char.role}</div>
-        <h3 className="text-2xl font-serif mb-1">{char.name}</h3>
-        <div className="text-sm text-white/40 mb-4 italic">{char.talent}</div>
-        <p className="text-xs text-white/60 mb-6 leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-500 max-h-0 group-hover:max-h-24 overflow-hidden">
+      <div className="absolute bottom-0 left-0 right-0 p-10 z-20 translate-y-2 group-hover:translate-y-0 transition-transform duration-700">
+        <div className="text-[8px] tracking-[0.5em] text-white/30 mb-3 font-bold uppercase">{char.role}</div>
+        <h3 className="text-3xl font-serif mb-2 group-hover:text-white transition-colors">{char.name}</h3>
+        <div className="text-xs text-white/20 mb-6 italic tracking-widest">{char.talent}</div>
+        
+        <p className="text-[11px] text-white/40 mb-8 leading-relaxed opacity-0 group-hover:opacity-100 transition-all duration-1000 max-h-0 group-hover:max-h-32 overflow-hidden font-light">
           {char.description}
         </p>
-        <div className="inline-block border border-white/20 px-3 py-1 rounded text-[10px] tracking-widest text-white font-bold">
+        
+        <div className="inline-block border border-white/10 group-hover:border-white/40 px-5 py-2 rounded-full text-[8px] tracking-[0.3em] text-white/60 font-bold uppercase transition-all group-hover:bg-white group-hover:text-black">
           {char.tagline}
         </div>
       </div>
@@ -122,16 +118,16 @@ const CharacterCard: React.FC<{ char: Character }> = ({ char }) => {
   );
 };
 
-const Ensemble: React.FC = () => {
+const Ensemble = () => {
   return (
-    <section id="ensemble" className="py-24 bg-white/[0.02]">
+    <section id="ensemble" className="py-32 bg-[#050505]">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="mb-16">
-          <h2 className="text-xs tracking-[0.4em] text-white/40 font-bold mb-4 uppercase">Section II: The Cast</h2>
-          <h3 className="text-5xl font-serif">The Ensemble</h3>
+        <div className="mb-20">
+          <h2 className="text-[10px] tracking-[0.6em] text-white/20 font-bold mb-6 uppercase">Section II: The Cast</h2>
+          <h3 className="text-6xl font-serif italic text-white/80">The Ensemble</h3>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
           {characters.map((char) => (
             <CharacterCard key={char.name} char={char} />
           ))}

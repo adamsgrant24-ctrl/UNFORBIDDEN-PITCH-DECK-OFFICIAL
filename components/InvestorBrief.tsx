@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { generateCinematicImage } from '../services/geminiService.tsx';
 
-const InvestorBrief: React.FC = () => {
-  const [boardroomImage, setBoardroomImage] = useState<string | null>(null);
+const InvestorBrief = () => {
+  const [boardroomImage, setBoardroomImage] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -13,6 +13,8 @@ const InvestorBrief: React.FC = () => {
           "A minimalist luxury penthouse boardroom at dusk, floor-to-ceiling glass windows overlooking a dark city, 35mm cinematic lighting, cold blue tones"
         );
         setBoardroomImage(img);
+      } catch (err) {
+        console.error(err);
       } finally {
         setLoading(false);
       }

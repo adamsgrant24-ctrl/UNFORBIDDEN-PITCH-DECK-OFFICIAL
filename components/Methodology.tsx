@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { generateCinematicImage } from '../services/geminiService.tsx';
 
-const Methodology: React.FC = () => {
-  const [studioImage, setStudioImage] = useState<string | null>(null);
+const Methodology = () => {
+  const [studioImage, setStudioImage] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -13,6 +13,8 @@ const Methodology: React.FC = () => {
           "A messy artist's studio in Woodstock with charcoal dust, oil paintings, and warm amber flickering light, 35mm anamorphic"
         );
         setStudioImage(img);
+      } catch (err) {
+        console.error(err);
       } finally {
         setLoading(false);
       }
@@ -25,29 +27,31 @@ const Methodology: React.FC = () => {
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
           <div className="lg:col-span-5">
-            <h2 className="text-xs tracking-[0.4em] text-white/40 font-bold mb-4 uppercase">Directorial Methodology</h2>
-            <h3 className="text-5xl font-serif mb-12">The Action Card System</h3>
+            <h2 className="text-xs tracking-[0.4em] text-white/40 font-bold mb-4 uppercase">Directorial Manifesto</h2>
+            <h3 className="text-5xl font-serif mb-12">The Action Card Protocol</h3>
             
             <div className="space-y-12">
               <div className="group">
-                <div className="text-white/20 text-4xl font-serif mb-4 group-hover:text-white transition-colors">01. Bypass the Ego</div>
+                <div className="text-white/20 text-4xl font-serif mb-4 group-hover:text-white transition-colors">01. Ego Deconstruction</div>
                 <p className="text-white/60 font-light leading-relaxed">
-                  I do not ask my actors to "play an emotion." I ask them to execute a physical and psychological Action. 
-                  This forces the actor into the present moment, generating spontaneous, high-stakes truth.
+                  We bypass traditional "performance." Actors execute visceral physical and psychological Actions. 
+                  This forces the subconscious to the surface, generating spontaneous, high-stakes biological truth.
                 </p>
               </div>
 
               <div className="group">
-                <div className="text-white/20 text-4xl font-serif mb-4 group-hover:text-white transition-colors">02. The Friction</div>
+                <div className="text-white/20 text-4xl font-serif mb-4 group-hover:text-white transition-colors">02. Methodological Friction</div>
                 <p className="text-white/60 font-light leading-relaxed">
-                  Pitting different acting schools against one another. Seasoned precision (Technical Masters) vs. Raw unscripted reality (The Impulse).
+                  A collision of schools: Seasoned precision (Technical Masters) vs. Unscripted reality (Impulse Artists). 
+                  The friction creates the Masterpiece.
                 </p>
               </div>
 
               <div className="group">
-                <div className="text-white/20 text-4xl font-serif mb-4 group-hover:text-white transition-colors">03. The Lens as Participant</div>
+                <div className="text-white/20 text-4xl font-serif mb-4 group-hover:text-white transition-colors">03. Participatory Optics</div>
                 <p className="text-white/60 font-light leading-relaxed">
-                  The camera follows the Action Card. "To Shatter" means handheld and intimate. "To Enclose" means static and clinical.
+                  The lens is a character. In the Vanguard, it is static and clinical. In the Unfettered, it is intimate, 
+                  handheld, and reactive to the Action Card.
                 </p>
               </div>
             </div>
@@ -63,8 +67,8 @@ const Methodology: React.FC = () => {
               <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent" />
               <div className="absolute bottom-12 left-12 max-w-sm">
                 <div className="text-[10px] tracking-widest text-white/40 mb-2 font-bold uppercase">Location Audit</div>
-                <div className="text-2xl font-serif text-white italic">Pole B: The Unfettered (Biological Chaos)</div>
-                <div className="text-xs text-white/50 mt-2">Woodstock Industrial District | -33.93, 18.45</div>
+                <div className="text-2xl font-serif text-white italic">Pole B: Biological Chaos (Studio Inquiry)</div>
+                <div className="text-xs text-white/50 mt-2">Woodstock Industrial District | Cape Town</div>
               </div>
             </div>
           </div>

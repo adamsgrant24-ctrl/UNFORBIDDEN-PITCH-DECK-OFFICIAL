@@ -1,12 +1,7 @@
 
 import React from 'react';
 
-interface HeaderProps {
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
-}
-
-const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
+const Header = ({ activeTab, setActiveTab }) => {
   const navItems = [
     { id: 'vision', label: 'THE VISION' },
     { id: 'ensemble', label: 'ENSEMBLE' },
