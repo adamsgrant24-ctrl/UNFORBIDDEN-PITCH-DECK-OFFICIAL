@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { generateCinematicImage } from '../services/geminiService.tsx';
 
@@ -11,7 +10,7 @@ const Hero = () => {
     const loadHero = async () => {
       try {
         const img = await generateCinematicImage(
-          "A massive brutalist skyscraper made of obsidian glass, reflecting a dark stormy ocean, flickering neon blue highlights, 35mm anamorphic film style, deep noir shadows"
+          "Extreme wide symmetrical shot, a colossal brutalist monolith of obsidian glass in a shimmering deep blue void, cinematic lighting, 35mm anamorphic, noir atmosphere"
         );
         if (active) setBgImage(img);
       } catch (err) {
@@ -52,7 +51,7 @@ const Hero = () => {
       
       <div className="relative z-10 text-center px-6 max-w-7xl">
         <div className="inline-block mb-16 overflow-hidden">
-          <h2 className="text-[10px] tracking-[1.2em] text-white/40 font-bold uppercase">
+          <h2 className="text-[10px] tracking-[1.2em] text-white/40 font-bold uppercase animate-slide-up">
             INQUIRY 001: THE TRANSCENDENTAL ARCHITECTURE
           </h2>
         </div>
@@ -78,12 +77,6 @@ const Hero = () => {
             <span className="relative z-10">ENTER THE INQUIRY</span>
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
           </button>
-          
-          <div className="flex items-center gap-4 opacity-20">
-             <div className="w-12 h-[1px] bg-white" />
-             <div className="text-[8px] tracking-[0.5em] font-bold uppercase">Vanguard Production House</div>
-             <div className="w-12 h-[1px] bg-white" />
-          </div>
         </div>
       </div>
 
