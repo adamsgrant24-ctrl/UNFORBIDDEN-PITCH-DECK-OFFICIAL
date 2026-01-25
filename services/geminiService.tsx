@@ -1,7 +1,7 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-const CACHE_PREFIX = "unforbidden_v9_";
+const CACHE_PREFIX = "unforbidden_v10_";
 
 const getCacheKey = (prompt, ratio) => {
   const clean = (prompt + ratio).replace(/[^a-z0-9]/gi, '').toLowerCase();
@@ -20,6 +20,7 @@ const setCachedImage = (key, data) => {
   try {
     localStorage.setItem(key, data);
   } catch (e) {
+    // Clear old cache if storage full
     for (let i = 0; i < localStorage.length; i++) {
       const k = localStorage.key(i);
       if (k && k.startsWith(CACHE_PREFIX)) {
@@ -32,9 +33,10 @@ const setCachedImage = (key, data) => {
 
 const taskQueue = [];
 let isProcessing = false;
+let globalQuotaExhausted = false;
 
 const processQueue = async () => {
-  if (isProcessing || taskQueue.length === 0) return;
+  if (isProcessing || taskQueue.length === 0 || globalQuotaExhausted) return;
   isProcessing = true;
   
   while (taskQueue.length > 0) {
@@ -42,10 +44,16 @@ const processQueue = async () => {
     if (task) {
       try {
         await task();
+        // Generous delay between generations to avoid hitting RPM limits
+        await new Promise(r => setTimeout(r, 10000));
       } catch (err) {
         console.error("Queue Task Failure:", err);
+        const errStr = String(err).toLowerCase();
+        if (errStr.includes('429') || errStr.includes('resource_exhausted')) {
+            console.warn("Quota hit during queue processing. Pausing for 60s.");
+            await new Promise(r => setTimeout(r, 60000));
+        }
       }
-      await new Promise(r => setTimeout(r, 4500));
     }
   }
   
@@ -66,7 +74,7 @@ function enqueue(task) {
   });
 }
 
-const fetchWithRetry = async (fn, retries = 2, delay = 6000) => {
+const fetchWithRetry = async (fn, retries = 2, delay = 12000) => {
   try {
     return await fn();
   } catch (error) {
@@ -74,6 +82,7 @@ const fetchWithRetry = async (fn, retries = 2, delay = 6000) => {
     const isRateLimit = errorStr.includes('429') || errorStr.includes('resource_exhausted');
 
     if (retries > 0 && isRateLimit) {
+      console.warn(`Rate limit hit. Retrying in ${delay}ms...`);
       await new Promise(r => setTimeout(r, delay));
       return fetchWithRetry(fn, retries - 1, delay * 2);
     }
@@ -94,7 +103,7 @@ export const generateCinematicImage = async (prompt, aspectRatio = "1:1") => {
           model: 'gemini-2.5-flash-image',
           contents: {
             parts: [{
-              text: `Cinematic film still, 35mm anamorphic. ${prompt}. High contrast, deep noir shadows, atmospheric.`
+              text: `Cinematic film still, 35mm anamorphic. ${prompt}. High contrast, deep noir shadows, atmospheric, masterpiece quality.`
             }]
           },
           config: {

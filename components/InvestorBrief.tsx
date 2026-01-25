@@ -1,13 +1,28 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { generateCinematicImage } from '../services/geminiService.tsx';
 
 const InvestorBrief = () => {
   const [boardroomImage, setBoardroomImage] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const sectionRef = useRef(null);
+  const initialized = useRef(false);
 
   useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !initialized.current) {
+          initialized.current = true;
+          fetchImg();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (sectionRef.current) observer.observe(sectionRef.current);
+
     const fetchImg = async () => {
+      setLoading(true);
       try {
         const img = await generateCinematicImage(
           "A minimalist luxury penthouse boardroom at dusk, floor-to-ceiling glass windows overlooking a dark city, 35mm cinematic lighting, cold blue tones"
@@ -19,11 +34,12 @@ const InvestorBrief = () => {
         setLoading(false);
       }
     };
-    fetchImg();
+
+    return () => observer.disconnect();
   }, []);
 
   return (
-    <section id="investor" className="py-24 px-6 bg-[#0a0a0a] relative overflow-hidden">
+    <section id="investor" ref={sectionRef} className="py-24 px-6 bg-[#0a0a0a] relative overflow-hidden">
       {boardroomImage && (
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-10 pointer-events-none transition-opacity duration-1000"

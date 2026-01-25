@@ -1,12 +1,28 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useRef } from 'react';
 import { generateCinematicImage } from '../services/geminiService.tsx';
 
 const Methodology = () => {
   const [studioImage, setStudioImage] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const sectionRef = useRef(null);
+  const initialized = useRef(false);
 
   useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !initialized.current) {
+          initialized.current = true;
+          fetchImg();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (sectionRef.current) observer.observe(sectionRef.current);
+
     const fetchImg = async () => {
+      setLoading(true);
       try {
         const img = await generateCinematicImage(
           "A messy charcoal artist's studio in Woodstock, deep shadows, flickering warm light, oil paintings, 35mm anamorphic"
@@ -18,11 +34,12 @@ const Methodology = () => {
         setLoading(false);
       }
     };
-    fetchImg();
+
+    return () => observer.disconnect();
   }, []);
 
   return (
-    <section id="methodology" className="py-24 px-6 bg-[#030303]">
+    <section id="methodology" ref={sectionRef} className="py-24 px-6 bg-[#030303]">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
           <div className="lg:col-span-5">

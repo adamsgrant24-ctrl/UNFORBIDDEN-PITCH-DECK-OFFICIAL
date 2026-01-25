@@ -7,7 +7,7 @@ const characters = [
     name: "LUKE",
     talent: "Teboho Mzisa",
     role: "The Obsidian Shadow",
-    description: "Represents the raw, visceral core of the 'Action Card' system. A master of the physical impulse.",
+    description: "Represents the raw, visceral core of the 'Action Card' system. A master of the physical impulse who exists at the friction point of the Inquiry.",
     tagline: "TO SHATTER",
     imageUrl: "https://d26oc3sg82pgk3.cloudfront.net/files/media/uploads/casting_call/6d11ba7d-5585-4b5c-9813-b73b25378d88-bWFpbi1uLW4tMC0wLTAtMC0w.JPEG"
   },
@@ -15,7 +15,7 @@ const characters = [
     name: "CHLOE",
     talent: "Annette Miller",
     role: "The Anchor",
-    description: "The bridge between the old truth and the new awakening. She holds the emotional center of the Inquiry.",
+    description: "The bridge between the old truth and the new awakening. She holds the emotional center of the Inquiry against the clinical Vanguard.",
     tagline: "TO HOLD",
     imageUrl: "https://static.wixstatic.com/media/7aa071_d959f5b20fdb4cc5baade8999cd92225~mv2.png/v1/crop/x_0,y_55,w_1094,h_1069/fill/w_440,h_430,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Screenshot%202025-04-21%20at%2015_26_37.png"
   },
@@ -31,7 +31,7 @@ const characters = [
     name: "THE MOTHER",
     talent: "Pamela Nomvete",
     role: "The Gatekeeper",
-    description: "The clinical, controlling force that manages Luke’s life. She is the architect of the Vanguard prison.",
+    description: "The clinical, controlling force that manages Luke’s life. She is the chief architect of the Vanguard prison.",
     tagline: "TO ENCLOSE",
     imageUrl: "https://z-p3-scontent.fcpt1-1.fna.fbcdn.net/v/t51.82787-15/574358563_18494699617075979_6964922146901599829_n.jpg?stp=dst-jpg_s640x640_tt6&_nc_cat=108&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeGK1-X5Q6X3Byzzf9yJcdcSDoRPhVbmvS8OhE-FVua9LyZPV9BLVIYOJYCq1a5grqFGqalH91W2LEdjst1zWepN&_nc_ohc=wHrhHW62pfEQ7kNvwEDgVD8&_nc_oc=Adn94vvbS2_0ZwXETxXUlcTgRVImnbjgU2M011Bq5OcIiV_XtPHH4xPw4dytSuEIEqc&_nc_zt=23&_nc_ht=z-p3-scontent.fcpt1-1.fna&_nc_gid=l9pCT7ASTBWLhPNFHqRNRQ&oh=00_AfqZtGWmhSU7Hyq2UHCfph-TUH_AlBceyPgakOU2cpEjFA&oe=697AFECE"
   },
@@ -39,7 +39,7 @@ const characters = [
     name: "THE CRITIC",
     talent: "Giancarlo Esposito",
     role: "The Analytical Void",
-    description: "The judge of the 'Masterpiece'. He measures truth against the yardstick of marketability and clinical perfection.",
+    description: "The judge of the 'Masterpiece'. He measures truth against the cold yardstick of clinical perfection.",
     tagline: "TO DISSECT",
     imageUrl: "https://external-preview.redd.it/giancarlo-esposito-says-his-secret-role-is-an-original-and-v0-EZviJpAjbg38PF_0PJkq_luhZWNyv4voQLX_h-Kfxfo.jpg?width=1080&crop=smart&auto=webp&s=a7a4e6f16b7f90605678460e5c804995a141133c"
   },
@@ -47,13 +47,12 @@ const characters = [
     name: "THE PATRON",
     talent: "Charles Dance",
     role: "The Commodity Consumer",
-    description: "Old money; views the artist as a specimen under glass. Represents the commodification of raw truth.",
+    description: "Old money personified. He views the artist as a specimen under obsidian glass. The consumer of raw truth.",
     tagline: "TO COMMODIFY",
     imageUrl: "https://i.pinimg.com/736x/85/b4/8a/85b48a1eb7ab761553eeb38f72f3ebc2.jpg"
   }
 ];
 
-// Fix: Use 'any' type for props to resolve the issue where 'key' is not recognized on the inferred prop type
 const CharacterCard = ({ char }: any) => {
   const [displayUrl, setDisplayUrl] = useState(char.imageUrl);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -65,7 +64,7 @@ const CharacterCard = ({ char }: any) => {
     setIsGenerating(true);
     
     try {
-      const prompt = `Noir portrait of ${char.talent} as ${char.name}, highly cinematic lighting, deep shadows, 35mm film grain.`;
+      const prompt = `Noir cinematic portrait of ${char.talent} as ${char.name}, deep shadows, high contrast blue and amber lighting, 35mm film grain, anamorphic.`;
       const aiImage = await generateCinematicImage(prompt, "3:4");
       if (aiImage) setDisplayUrl(aiImage);
     } catch (err) {

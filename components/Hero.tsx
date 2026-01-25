@@ -1,30 +1,44 @@
-import React, { useEffect, useState } from 'react';
+
+import React, { useEffect, useState, useRef } from 'react';
 import { generateCinematicImage } from '../services/geminiService.tsx';
 
 const Hero = () => {
   const [bgImage, setBgImage] = useState(null);
   const [loading, setLoading] = useState(true);
+  const sectionRef = useRef(null);
+  const initialized = useRef(false);
 
   useEffect(() => {
-    let active = true;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !initialized.current) {
+          initialized.current = true;
+          loadHero();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (sectionRef.current) observer.observe(sectionRef.current);
+
     const loadHero = async () => {
       try {
         const img = await generateCinematicImage(
-          "Extreme wide symmetrical shot, a colossal brutalist monolith of obsidian glass in a shimmering deep blue void, cinematic lighting, 35mm anamorphic, noir atmosphere"
+          "Extreme wide symmetrical shot, a colossal brutalist monolith of obsidian glass in a shimmering deep blue void, cinematic lighting, 35mm anamorphic, noir atmosphere, high contrast"
         );
-        if (active) setBgImage(img);
+        setBgImage(img);
       } catch (err) {
         console.error("Hero Load Error:", err);
       } finally {
-        if (active) setLoading(false);
+        setLoading(false);
       }
     };
-    loadHero();
-    return () => { active = false; };
+
+    return () => observer.disconnect();
   }, []);
 
   return (
-    <section className="relative h-screen flex items-center justify-center overflow-hidden bg-[#020202]">
+    <section ref={sectionRef} className="relative h-screen flex items-center justify-center overflow-hidden bg-[#020202]">
       <div className="absolute inset-0 bg-gradient-to-tr from-[#0a1020] via-black to-[#050505]" />
       <div className="absolute inset-0 opacity-[0.1] pointer-events-none mix-blend-screen bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
       
@@ -77,6 +91,12 @@ const Hero = () => {
             <span className="relative z-10">ENTER THE INQUIRY</span>
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
           </button>
+          
+          <div className="flex items-center gap-4 opacity-20">
+             <div className="w-12 h-[1px] bg-white" />
+             <div className="text-[8px] tracking-[0.5em] font-bold uppercase">Vanguard Production House</div>
+             <div className="w-12 h-[1px] bg-white" />
+          </div>
         </div>
       </div>
 

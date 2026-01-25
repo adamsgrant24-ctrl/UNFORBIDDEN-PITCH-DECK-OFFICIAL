@@ -1,12 +1,28 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useRef } from 'react';
 import { generateCinematicImage } from '../services/geminiService.tsx';
 
 const Revenue = () => {
   const [revenueImage, setRevenueImage] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const sectionRef = useRef(null);
+  const initialized = useRef(false);
 
   useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !initialized.current) {
+          initialized.current = true;
+          fetchImg();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (sectionRef.current) observer.observe(sectionRef.current);
+
     const fetchImg = async () => {
+      setLoading(true);
       try {
         const img = await generateCinematicImage(
           "A high-end modern art gallery at night, massive charcoal drawings on white walls, cold lighting, symmetrical composition, 35mm film frame"
@@ -18,7 +34,8 @@ const Revenue = () => {
         setLoading(false);
       }
     };
-    fetchImg();
+
+    return () => observer.disconnect();
   }, []);
 
   const projections = [
@@ -29,7 +46,7 @@ const Revenue = () => {
   ];
 
   return (
-    <section id="revenue" className="py-24 px-6 bg-[#050505]">
+    <section id="revenue" ref={sectionRef} className="py-24 px-6 bg-[#050505]">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
           <div className="lg:col-span-4">

@@ -1,13 +1,28 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { generateCinematicImage } from '../services/geminiService.tsx';
 
 const TechnicalAudit = () => {
   const [techImage, setTechImage] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const sectionRef = useRef(null);
+  const initialized = useRef(false);
 
   useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !initialized.current) {
+          initialized.current = true;
+          fetchImg();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (sectionRef.current) observer.observe(sectionRef.current);
+
     const fetchImg = async () => {
+      setLoading(true);
       try {
         const img = await generateCinematicImage(
           "Macro shot of a high-end anamorphic ARRI camera lens, light hitting the glass elements, technical blue light flares, 35mm anamorphic aesthetic"
@@ -19,7 +34,8 @@ const TechnicalAudit = () => {
         setLoading(false);
       }
     };
-    fetchImg();
+
+    return () => observer.disconnect();
   }, []);
 
   const specs = [
@@ -32,7 +48,7 @@ const TechnicalAudit = () => {
   ];
 
   return (
-    <section id="technical" className="py-24 bg-black border-y border-white/5">
+    <section id="technical" ref={sectionRef} className="py-24 bg-black border-y border-white/5">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-16">
           <div>

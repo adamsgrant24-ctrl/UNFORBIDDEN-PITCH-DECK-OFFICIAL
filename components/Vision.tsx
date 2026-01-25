@@ -1,12 +1,28 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useRef } from 'react';
 import { generateCinematicImage } from '../services/geminiService.tsx';
 
 const Vision = () => {
   const [visionImage, setVisionImage] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const sectionRef = useRef(null);
+  const initialized = useRef(false);
 
   useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !initialized.current) {
+          initialized.current = true;
+          fetchImg();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (sectionRef.current) observer.observe(sectionRef.current);
+
     const fetchImg = async () => {
+      setLoading(true);
       try {
         const img = await generateCinematicImage(
           "A conceptual architectural visualization of a glass prison floating in a dark, infinite void. Minimalist, neon blue accents, high contrast, cinematic lighting, anamorphic."
@@ -18,11 +34,12 @@ const Vision = () => {
         setLoading(false);
       }
     };
-    fetchImg();
+
+    return () => observer.disconnect();
   }, []);
 
   return (
-    <section id="vision" className="py-24 px-6 max-w-7xl mx-auto">
+    <section id="vision" ref={sectionRef} className="py-24 px-6 max-w-7xl mx-auto">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
         <div className="lg:col-span-7">
           <h2 className="text-xs tracking-[0.4em] text-white/40 font-bold mb-4 uppercase">Directorial Thesis</h2>
