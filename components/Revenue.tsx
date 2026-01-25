@@ -35,8 +35,8 @@ const Revenue = () => {
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
           <div className="lg:col-span-4">
-            <h2 className="text-xs tracking-[0.4em] text-white/40 font-bold mb-4 uppercase">Phase I Architecture</h2>
-            <h3 className="text-5xl font-serif mb-8">Equitable Asset Architecture</h3>
+            <h2 className="text-xs tracking-[0.4em] text-white/40 font-bold mb-4 uppercase">Economic Architecture</h2>
+            <h3 className="text-5xl font-serif mb-8">Equitable Asset Classes</h3>
             <p className="text-white/60 mb-8 font-light leading-relaxed">
               Vanguard disrupts the traditional box-office model. We deconstruct the production process into a multi-layered asset class. 
               By integrating physical fine art and Digital Provenance, we provide partners with immediate liquidity and diversified exposure.
@@ -50,7 +50,7 @@ const Revenue = () => {
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent" />
               <div className="absolute bottom-6 left-6">
-                 <div className="text-[10px] tracking-widest text-white/30 font-bold uppercase">Market Audit</div>
+                 <div className="text-[10px] tracking-widest text-white/30 font-bold uppercase">Asset Audit</div>
                  <div className="text-sm font-serif italic">The Commodification of Truth</div>
               </div>
             </div>

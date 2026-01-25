@@ -26,8 +26,8 @@ const Vision = () => {
     <section id="vision" className="py-24 px-6 max-w-7xl mx-auto">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
         <div className="lg:col-span-7">
-          <h2 className="text-xs tracking-[0.4em] text-white/40 font-bold mb-4 uppercase">The Core Thesis</h2>
-          <h3 className="text-5xl font-serif mb-12 italic">Inquiry 001: Transcendental Architecture</h3>
+          <h2 className="text-xs tracking-[0.4em] text-white/40 font-bold mb-4 uppercase">Directorial Thesis</h2>
+          <h3 className="text-5xl font-serif mb-12 italic">Inquiry 001: The Transcendental Architecture</h3>
           
           <div className="space-y-8 text-white/70 leading-relaxed font-light text-xl">
             <p>
@@ -61,7 +61,7 @@ const Vision = () => {
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
             <div className="absolute bottom-8 left-8">
-               <div className="text-[10px] tracking-widest text-white/40 mb-1 font-bold uppercase">Concept Audit</div>
+               <div className="text-[10px] tracking-widest text-white/40 mb-1 font-bold uppercase">Architectural Audit</div>
                <div className="text-lg font-serif">The Invincible Prison (3D Visualization)</div>
             </div>
           </div>

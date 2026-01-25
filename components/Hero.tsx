@@ -11,7 +11,7 @@ const Hero = () => {
     const loadHero = async () => {
       try {
         const img = await generateCinematicImage(
-          "Extreme wide symmetrical shot, a colossal brutalist monolith of black glass in a shimmering blue void, cinematic lighting, 35mm anamorphic, noir atmosphere"
+          "A massive brutalist skyscraper made of obsidian glass, reflecting a dark stormy ocean, flickering neon blue highlights, 35mm anamorphic film style, deep noir shadows"
         );
         if (active) setBgImage(img);
       } catch (err) {
@@ -52,7 +52,7 @@ const Hero = () => {
       
       <div className="relative z-10 text-center px-6 max-w-7xl">
         <div className="inline-block mb-16 overflow-hidden">
-          <h2 className="text-[10px] tracking-[1.2em] text-white/40 font-bold uppercase animate-slide-up">
+          <h2 className="text-[10px] tracking-[1.2em] text-white/40 font-bold uppercase">
             INQUIRY 001: THE TRANSCENDENTAL ARCHITECTURE
           </h2>
         </div>
@@ -62,7 +62,7 @@ const Hero = () => {
             UNFORBIDDEN
           </h1>
           <div className="mt-4 text-[10px] md:text-[14px] tracking-[2.5em] text-white/20 font-bold uppercase translate-x-4">
-            ARCHITECTURAL PROSPECTUS
+            OFFICIAL PROSPECTUS
           </div>
         </div>
         
