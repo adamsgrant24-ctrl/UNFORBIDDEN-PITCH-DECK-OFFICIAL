@@ -10,7 +10,7 @@ import TechnicalAudit from './components/TechnicalAudit.tsx';
 import InvestorBrief from './components/InvestorBrief.tsx';
 import Footer from './components/Footer.tsx';
 
-const App = () => {
+const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState('home');
 
   return (

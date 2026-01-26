@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect, useRef } from 'react';
-import { generateCinematicImage } from '../services/geminiService.tsx';
+import { generateCinematicImage } from '../services/geminiService.ts';
 
-const TechnicalAudit = () => {
-  const [techImage, setTechImage] = useState(null);
+const TechnicalAudit: React.FC = () => {
+  const [techImage, setTechImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const sectionRef = useRef(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const initialized = useRef(false);
 
   useEffect(() => {
@@ -27,9 +26,9 @@ const TechnicalAudit = () => {
         const img = await generateCinematicImage(
           "Macro shot of a high-end anamorphic ARRI camera lens, light hitting the glass elements, technical blue light flares, 35mm anamorphic aesthetic"
         );
-        setTechImage(img);
-      } catch (err) {
-        console.error(err);
+        if (img) setTechImage(img);
+      } catch (e) {
+        console.error("Technical image failed", e);
       } finally {
         setLoading(false);
       }

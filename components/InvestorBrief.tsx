@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect, useRef } from 'react';
-import { generateCinematicImage } from '../services/geminiService.tsx';
+import { generateCinematicImage } from '../services/geminiService.ts';
 
-const InvestorBrief = () => {
-  const [boardroomImage, setBoardroomImage] = useState(null);
+const InvestorBrief: React.FC = () => {
+  const [boardroomImage, setBoardroomImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const sectionRef = useRef(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const initialized = useRef(false);
 
   useEffect(() => {
@@ -27,9 +26,9 @@ const InvestorBrief = () => {
         const img = await generateCinematicImage(
           "A minimalist luxury penthouse boardroom at dusk, floor-to-ceiling glass windows overlooking a dark city, 35mm cinematic lighting, cold blue tones"
         );
-        setBoardroomImage(img);
-      } catch (err) {
-        console.error(err);
+        if (img) setBoardroomImage(img);
+      } catch (e) {
+        console.error("Investor brief image failed", e);
       } finally {
         setLoading(false);
       }
