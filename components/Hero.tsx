@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useRef } from 'react';
 import { generateCinematicImage } from '../services/geminiService.ts';
 import Trailer from './Trailer.tsx';
@@ -32,14 +33,17 @@ const Hero: React.FC = () => {
       <Trailer isOpen={isTrailerOpen} onClose={() => setIsTrailerOpen(false)} />
 
       <div 
-        className={`absolute inset-0 transition-opacity duration-[3000ms] ${bgImage ? 'opacity-60' : 'opacity-20'}`}
+        className={`absolute inset-0 transition-opacity duration-[3000ms] ${bgImage ? 'opacity-70' : 'opacity-20'}`}
         style={{ 
           backgroundImage: bgImage ? `url(${bgImage})` : 'none',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
         }}
-      />
+      >
+        {/* Grain Overlay */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-repeat" />
+      </div>
       
       <div className="absolute inset-0 bg-gradient-to-b from-blue-900/10 via-transparent to-[#050505]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03)_0%,transparent_70%)]" />
@@ -47,7 +51,7 @@ const Hero: React.FC = () => {
       {loading && !bgImage && (
         <div className="absolute inset-0 flex flex-col items-center justify-center z-20">
           <div className="w-16 h-16 border-b-2 border-white/20 rounded-full animate-spin mb-4" />
-          <div className="text-[8px] tracking-[0.5em] text-white/30 font-bold uppercase">Synthesizing Vision...</div>
+          <div className="text-[10px] tracking-[0.5em] text-white/30 font-bold uppercase animate-pulse">Synchronizing Visual Core...</div>
         </div>
       )}
       
@@ -66,7 +70,7 @@ const Hero: React.FC = () => {
         <div className="mt-12 flex flex-col md:flex-row items-center justify-center gap-6">
           <button 
             onClick={() => setIsTrailerOpen(true)}
-            className="group relative px-10 py-4 bg-white text-black font-bold tracking-[0.3em] text-[10px] uppercase rounded-full overflow-hidden transition-all hover:scale-105"
+            className="group relative px-10 py-4 bg-white text-black font-bold tracking-[0.3em] text-[10px] uppercase rounded-full overflow-hidden transition-all hover:scale-105 shadow-[0_0_30px_rgba(255,255,255,0.1)]"
           >
             <span className="relative z-10">Initiate Trailer Protocol</span>
             <div className="absolute inset-0 bg-blue-500 translate-y-full group-hover:translate-y-0 transition-transform duration-500 opacity-10" />

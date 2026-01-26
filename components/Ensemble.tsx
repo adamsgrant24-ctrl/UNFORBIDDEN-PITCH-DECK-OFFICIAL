@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { generateCinematicImage } from '../services/geminiService.ts';
 
@@ -72,41 +73,46 @@ const CharacterCard: React.FC<{ char: Character }> = ({ char }) => {
     triggerRef.current = true;
     setIsGenerating(true);
     
-    const aiImage = await generateCinematicImage(
-      `A moody cinematic portrait of actor ${char.talent} playing the role of ${char.name}, ${char.description}. Low lighting, anamorphic lens flares, high contrast noir aesthetic.`,
-      "3:4"
-    );
-    
-    if (aiImage) {
-      setDisplayUrl(aiImage);
-      setIsSynthesized(true);
+    try {
+      const aiImage = await generateCinematicImage(
+        `High-end cinematic portrait of the character ${char.name}, played by ${char.talent}. Noir aesthetic, moody dramatic lighting, ${char.role}, transcendental film still.`,
+        "3:4"
+      );
+      
+      if (aiImage) {
+        setDisplayUrl(aiImage);
+        setIsSynthesized(true);
+      }
+    } catch (err) {
+      console.error(`Failed to synthesize ${char.name}:`, err);
+    } finally {
+      setIsGenerating(false);
     }
-    setIsGenerating(false);
   };
 
   return (
-    <div className="group relative overflow-hidden aspect-[3/4] glass-panel rounded-xl border border-white/5">
+    <div className="group relative overflow-hidden aspect-[3/4] glass-panel rounded-xl border border-white/5 bg-black">
       {displayUrl ? (
         <img 
           src={displayUrl} 
           alt={char.name} 
           onError={handleImageError}
-          className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ${isSynthesized ? '' : 'grayscale'} group-hover:grayscale-0 ${isGenerating ? 'opacity-20 animate-pulse' : 'opacity-60 group-hover:opacity-80'}`}
+          className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ${isSynthesized ? 'opacity-70 group-hover:opacity-100' : 'grayscale group-hover:grayscale-0 opacity-60 group-hover:opacity-80'} ${isGenerating ? 'opacity-0 scale-110' : 'scale-100'}`}
         />
       ) : (
         <div className="absolute inset-0 bg-white/5 flex items-center justify-center">
-           <span className="text-white/10 font-serif text-8xl select-none">{char.name[0]}</span>
+           <span className="text-white/10 font-serif text-8xl select-none animate-pulse">{char.name[0]}</span>
         </div>
       )}
 
       {isGenerating && (
-        <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin mb-4" />
-          <div className="text-[8px] tracking-[0.4em] text-white/60 font-bold uppercase">AI VISION SYNTHESIS...</div>
+        <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/80 backdrop-blur-md">
+          <div className="w-8 h-8 border-2 border-white/10 border-t-white rounded-full animate-spin mb-4" />
+          <div className="text-[9px] tracking-[0.5em] text-white/70 font-bold uppercase text-center px-4">Synthesizing {char.name}...</div>
         </div>
       )}
       
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent z-10" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10" />
       
       <div className="absolute bottom-0 left-0 right-0 p-8 z-20 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
         <div className="text-[10px] tracking-widest text-white/50 mb-2 font-bold uppercase">{char.role}</div>

@@ -1,5 +1,8 @@
 {
   "name": "UNFORBIDDEN - The Architectural Prospectus",
   "description": "A high-concept cinematic web experience for the UNFORBIDDEN film trilogy, featuring Transcendental Noir aesthetics and investment architecture.",
-  "requestFramePermissions": []
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
 }
