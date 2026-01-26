@@ -1,10 +1,9 @@
 
 import { GoogleGenAI, Modality } from "@google/genai";
 
-const CACHE_PREFIX = "unforbidden_img_v4_";
-const AUDIO_CACHE_PREFIX = "unforbidden_audio_v3_";
+const CACHE_PREFIX = "unforbidden_img_v6_";
+const AUDIO_CACHE_PREFIX = "unforbidden_audio_v5_";
 
-// Safer key generation that doesn't choke on Unicode
 const getCacheKey = (input: string) => {
   let hash = 0;
   for (let i = 0; i < input.length; i++) {
@@ -27,12 +26,12 @@ const setCachedImage = (key: string, data: string) => {
   try {
     localStorage.setItem(CACHE_PREFIX + getCacheKey(key), data);
   } catch (e) {
-    // Evict old entries if full
-    for (let i = 0; i < localStorage.length; i++) {
+    // Aggressive eviction: Clear almost everything if we hit the 5MB limit
+    console.warn("Local storage quota exceeded, clearing cache...");
+    for (let i = localStorage.length - 1; i >= 0; i--) {
       const k = localStorage.key(i);
-      if (k && k.startsWith(CACHE_PREFIX)) {
+      if (k && (k.startsWith(CACHE_PREFIX) || k.startsWith(AUDIO_CACHE_PREFIX))) {
         localStorage.removeItem(k);
-        if (i > 5) break; // Clear a few
       }
     }
     try { localStorage.setItem(CACHE_PREFIX + getCacheKey(key), data); } catch {}
@@ -69,15 +68,15 @@ export async function decodeAudioData(
 }
 
 class GeminiQueue {
-  private queue: (() => Promise<void>)[] = [];
+  private queue: { task: () => Promise<void>, priority: boolean }[] = [];
   private processing = false;
   private lastRequestTime = 0;
-  private minInterval = 3000; // 3s is much more usable for the free tier (20 RPM)
+  private minInterval = 2000; 
   private globalCooldown = false;
 
-  async add<T>(task: () => Promise<T>): Promise<T> {
+  async add<T>(task: () => Promise<T>, priority = false): Promise<T> {
     return new Promise((resolve, reject) => {
-      this.queue.push(async () => {
+      const wrappedTask = async () => {
         if (this.globalCooldown) {
           reject(new Error("QUOTA_COOLDOWN"));
           return;
@@ -88,7 +87,13 @@ class GeminiQueue {
         } catch (error) {
           reject(error);
         }
-      });
+      };
+
+      if (priority) {
+        this.queue.unshift({ task: wrappedTask, priority });
+      } else {
+        this.queue.push({ task: wrappedTask, priority });
+      }
       this.process();
     });
   }
@@ -99,25 +104,24 @@ class GeminiQueue {
 
     const now = Date.now();
     const timeSinceLast = now - this.lastRequestTime;
-    if (timeSinceLast < this.minInterval) {
-      await new Promise(r => setTimeout(r, this.minInterval - timeSinceLast));
+    const jitter = Math.random() * 500;
+    if (timeSinceLast < (this.minInterval + jitter)) {
+      await new Promise(r => setTimeout(r, (this.minInterval + jitter) - timeSinceLast));
     }
 
-    const task = this.queue.shift();
-    if (task) {
+    const item = this.queue.shift();
+    if (item) {
       try {
-        await task();
+        await item.task();
         this.lastRequestTime = Date.now();
       } catch (e: any) {
         const errorStr = String(e).toLowerCase();
-        console.error("Gemini Task Error:", e);
-        if (errorStr.includes('429') || errorStr.includes('resource_exhausted') || errorStr.includes('quota')) {
-          console.warn("Global Quota hit. Entering cooldown.");
+        if (errorStr.includes('429') || errorStr.includes('resource_exhausted')) {
           this.globalCooldown = true;
           setTimeout(() => {
             this.globalCooldown = false;
             this.process();
-          }, 60000);
+          }, 45000);
         }
       }
     }
@@ -129,46 +133,50 @@ class GeminiQueue {
 
 const queue = new GeminiQueue();
 
-const fetchWithRetry = async (fn: () => Promise<any>, retries = 2, delay = 5000): Promise<any> => {
+const fetchWithRetry = async (fn: () => Promise<any>, retries = 2): Promise<any> => {
   try {
     return await fn();
   } catch (error: any) {
-    const errorStr = String(error).toLowerCase();
-    const isRateLimit = errorStr.includes('429') || errorStr.includes('resource_exhausted') || errorStr.includes('quota');
-    
-    if (retries > 0 && isRateLimit) {
-      console.log(`Retrying after rate limit in ${delay}ms...`);
-      await new Promise(r => setTimeout(r, delay));
-      return fetchWithRetry(fn, retries - 1, delay * 2);
+    if (retries > 0) {
+      await new Promise(r => setTimeout(r, 3000));
+      return fetchWithRetry(fn, retries - 1);
     }
     throw error;
   }
 };
 
-export const generateCinematicImage = async (prompt: string, aspectRatio: "1:1" | "3:4" | "4:3" | "16:9" | "9:16" = "16:9"): Promise<string | null> => {
+export const generateCinematicImage = async (
+  prompt: string, 
+  aspectRatio: "1:1" | "3:4" | "4:3" | "16:9" | "9:16" = "16:9",
+  priority = false
+): Promise<string | null> => {
   const cacheKey = `${prompt}_${aspectRatio}`;
   const cached = getCachedImage(cacheKey);
   if (cached) return cached;
 
   return queue.add(async () => {
     try {
-      if (!process.env.API_KEY) {
-        console.error("API_KEY missing in process.env");
-        return null;
-      }
+      if (!process.env.API_KEY) return null;
       
-      const response = await fetchWithRetry(async () => {
-        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const generate = async (p: string, ar: any) => {
         return await ai.models.generateContent({
           model: 'gemini-2.5-flash-image',
           contents: {
-            parts: [{ text: `High-end cinematic film still, 35mm anamorphic. ${prompt}. Professional color grade, deep shadows, transcendental noir aesthetic, architectural lighting, highly detailed.` }]
+            parts: [{ text: `High-end cinematic film still. ${p}. Noir lighting, deep contrast, 35mm film aesthetic.` }]
           },
-          config: {
-            imageConfig: { aspectRatio }
-          }
+          config: { imageConfig: { aspectRatio: ar } }
         });
-      });
+      };
+
+      let response;
+      try {
+        response = await fetchWithRetry(() => generate(prompt, aspectRatio));
+      } catch (e) {
+        console.warn("Initial generation failed, trying fallback parameters...", e);
+        // Fallback to simpler prompt and aspect ratio if initial fails
+        response = await fetchWithRetry(() => generate(prompt.substring(0, 100), "1:1"), 1);
+      }
 
       const parts = response.candidates?.[0]?.content?.parts;
       if (!parts) return null;
@@ -184,7 +192,7 @@ export const generateCinematicImage = async (prompt: string, aspectRatio: "1:1" 
       console.error("Gemini Image Synthesis Failed:", error);
       return null;
     }
-  });
+  }, priority);
 };
 
 export const generateTrailerVoiceover = async (text: string): Promise<string | null> => {
@@ -195,21 +203,17 @@ export const generateTrailerVoiceover = async (text: string): Promise<string | n
   return queue.add(async () => {
     try {
       if (!process.env.API_KEY) return null;
-      const response = await fetchWithRetry(async () => {
-        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-        return await ai.models.generateContent({
-          model: "gemini-2.5-flash-preview-tts",
-          contents: [{ parts: [{ text: `Speak in a deep, gravelly, cinematic noir narrator voice. Paced and dramatic: ${text}` }] }],
-          config: {
-            responseModalities: [Modality.AUDIO],
-            speechConfig: {
-              voiceConfig: {
-                prebuiltVoiceConfig: { voiceName: 'Charon' },
-              },
-            },
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const response = await fetchWithRetry(() => ai.models.generateContent({
+        model: "gemini-2.5-flash-preview-tts",
+        contents: [{ parts: [{ text: `Voice: Deep cinematic. Script: ${text}` }] }],
+        config: {
+          responseModalities: [Modality.AUDIO],
+          speechConfig: {
+            voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Charon' } },
           },
-        });
-      });
+        },
+      }));
       const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
       if (base64Audio) {
         try { localStorage.setItem(cacheKey, base64Audio); } catch {}
@@ -217,7 +221,6 @@ export const generateTrailerVoiceover = async (text: string): Promise<string | n
       }
       return null;
     } catch (error) {
-      console.error("Gemini TTS Synthesis Failed:", error);
       return null;
     }
   });
