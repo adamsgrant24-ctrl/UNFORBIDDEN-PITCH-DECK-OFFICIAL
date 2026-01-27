@@ -1,44 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { generateCinematicImage } from '../services/geminiService.ts';
+
+import React from 'react';
 
 const Methodology: React.FC = () => {
-  const [studioImage, setStudioImage] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const sectionRef = useRef<HTMLElement>(null);
-  const initialized = useRef(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !initialized.current) {
-          initialized.current = true;
-          fetchImg();
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (sectionRef.current) observer.observe(sectionRef.current);
-
-    const fetchImg = async () => {
-      setLoading(true);
-      try {
-        const img = await generateCinematicImage(
-          "A messy artist's studio in Woodstock with charcoal dust, oil paintings, and warm amber flickering light, 35mm anamorphic"
-        );
-        if (img) setStudioImage(img);
-      } catch (e) {
-        console.error("Methodology image failed", e);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    return () => observer.disconnect();
-  }, []);
+  const locationImageUrl = "https://images.squarespace-cdn.com/content/v1/5c767450ab1a623fd072dc6a/1721735178466-HT7D93GPIQ2VIQI348UN/IMG_8414.jpg?format=750w";
 
   return (
-    <section id="methodology" ref={sectionRef} className="py-24 px-6">
+    <section id="methodology" className="py-24 px-6">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
           <div className="lg:col-span-5">
@@ -71,17 +38,23 @@ const Methodology: React.FC = () => {
           </div>
 
           <div className="lg:col-span-7 flex items-center">
-            <div className="relative w-full aspect-video rounded-3xl overflow-hidden glass-panel">
-              {studioImage ? (
-                <img src={studioImage} alt="Woodstock Studio" className="w-full h-full object-cover" />
-              ) : (
-                <div className={`w-full h-full ${loading ? 'bg-white/5 animate-pulse' : 'bg-gradient-to-br from-orange-950/20 to-black'}`} />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent" />
+            <div className="relative w-full aspect-video rounded-3xl overflow-hidden glass-panel border border-white/5 bg-neutral-900 group">
+              <img 
+                src={locationImageUrl} 
+                alt="Woodstock Studio - Location Audit" 
+                className="w-full h-full object-cover opacity-70 group-hover:opacity-90 transition-all duration-1000 scale-[1.02] group-hover:scale-100" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/20 to-transparent" />
               <div className="absolute bottom-12 left-12 max-w-sm">
-                <div className="text-[10px] tracking-widest text-white/40 mb-2 font-bold uppercase">Location Audit</div>
-                <div className="text-2xl font-serif text-white italic">Pole B: The Unfettered (Biological Chaos)</div>
-                <div className="text-xs text-white/50 mt-2">Woodstock Industrial District | -33.93, 18.45</div>
+                <div className="text-[10px] tracking-widest text-white/40 mb-2 font-bold uppercase animate-pulse">Location Audit</div>
+                <div className="text-2xl font-serif text-white italic drop-shadow-lg">Pole B: The Unfettered (Biological Chaos)</div>
+                <div className="text-xs text-white/50 mt-2 font-mono">Woodstock Industrial District | -33.93, 18.45</div>
+              </div>
+              
+              {/* Technical framing elements */}
+              <div className="absolute top-6 right-6 flex items-center gap-2 opacity-40">
+                <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                <div className="text-[8px] tracking-widest text-white font-bold uppercase font-mono">REC AUDIT</div>
               </div>
             </div>
           </div>

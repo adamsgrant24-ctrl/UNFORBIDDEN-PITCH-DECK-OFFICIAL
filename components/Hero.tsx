@@ -1,49 +1,20 @@
 
-import React, { useEffect, useState, useRef } from 'react';
-import { generateCinematicImage } from '../services/geminiService.ts';
+import React, { useState } from 'react';
 import Trailer from './Trailer.tsx';
 
 const Hero: React.FC = () => {
-  const [bgImage, setBgImage] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
-  const [retryCount, setRetryCount] = useState(0);
-  const initialized = useRef(false);
-
-  useEffect(() => {
-    const fetchImg = async () => {
-      setLoading(true);
-      try {
-        // Safer, more architectural prompt to avoid safety filters
-        const img = await generateCinematicImage(
-          "Minimalist luxury architectural interior, cold blue lighting, symmetrical composition, cinematic 35mm photography",
-          "16:9",
-          true // High priority request
-        );
-        if (img) {
-          setBgImage(img);
-        } else if (retryCount < 2) {
-          console.warn("Hero fetch failed, retrying...");
-          setTimeout(() => setRetryCount(prev => prev + 1), 2000);
-        }
-      } catch (e) {
-        console.error("Hero component error", e);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchImg();
-  }, [retryCount]);
+  const heroImageUrl = "https://images.stockcake.com/public/d/2/6/d2629728-e199-4c98-bce3-a34281907fe5_large/towering-glass-monolith-stockcake.jpg";
 
   return (
     <section className="relative h-[90vh] flex items-center justify-center overflow-hidden bg-[#050505]">
       <Trailer isOpen={isTrailerOpen} onClose={() => setIsTrailerOpen(false)} />
 
+      {/* Background Image Layer */}
       <div 
-        className={`absolute inset-0 transition-all duration-[3000ms] ease-out ${bgImage ? 'opacity-70 scale-100' : 'opacity-20 scale-105'}`}
+        className="absolute inset-0 transition-all duration-[3000ms] ease-out opacity-60 scale-100"
         style={{ 
-          backgroundImage: bgImage ? `url(${bgImage})` : 'none',
+          backgroundImage: `url(${heroImageUrl})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
@@ -52,17 +23,9 @@ const Hero: React.FC = () => {
         <div className="absolute inset-0 opacity-[0.05] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-repeat" />
       </div>
       
+      {/* Overlays for Depth and Contrast */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-[#050505]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,100,255,0.05)_0%,transparent_70%)]" />
-
-      {loading && !bgImage && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center z-20">
-          <div className="w-16 h-16 border-b-2 border-white/20 rounded-full animate-spin mb-4" />
-          <div className="text-[10px] tracking-[0.5em] text-white/30 font-bold uppercase animate-pulse">
-            {retryCount > 0 ? `Re-synchronizing (${retryCount})...` : 'Initializing Visual Core...'}
-          </div>
-        </div>
-      )}
       
       <div className="relative z-10 text-center px-6">
         <h2 className="text-[12px] tracking-[0.5em] text-white/50 mb-4 font-bold uppercase animate-fade-in">

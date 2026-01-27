@@ -1,41 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { generateCinematicImage } from '../services/geminiService.ts';
+
+import React from 'react';
 
 const Revenue: React.FC = () => {
-  const [revenueImage, setRevenueImage] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const sectionRef = useRef<HTMLElement>(null);
-  const initialized = useRef(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !initialized.current) {
-          initialized.current = true;
-          fetchImg();
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (sectionRef.current) observer.observe(sectionRef.current);
-
-    const fetchImg = async () => {
-      setLoading(true);
-      try {
-        const img = await generateCinematicImage(
-          "A high-end modern art gallery at night, massive charcoal drawings on white walls, cold lighting, symmetrical composition, 35mm film frame"
-        );
-        if (img) setRevenueImage(img);
-      } catch (e) {
-        console.error("Revenue image failed", e);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    return () => observer.disconnect();
-  }, []);
+  const revenueImageUrl = "https://i.pinimg.com/736x/df/0b/a8/df0ba86c65de537a546932d12dd34b43.jpg";
 
   const projections = [
     { class: '"Shadow" Series (Physical)', volume: "10 Works", price: "R 50,000", total: "R 500,000" },
@@ -46,7 +13,7 @@ const Revenue: React.FC = () => {
   ];
 
   return (
-    <section id="revenue" ref={sectionRef} className="py-24 px-6">
+    <section id="revenue" className="py-24 px-6 bg-black">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
           <div className="lg:col-span-4">
@@ -57,20 +24,20 @@ const Revenue: React.FC = () => {
               By integrating physical art collections and Digital Provenance, we provide investors with multiple points of entry and exit.
             </p>
 
-            <div className="aspect-square glass-panel rounded-2xl overflow-hidden mb-8 relative">
-              {revenueImage ? (
-                <img src={revenueImage} alt="Art Asset Visualization" className="w-full h-full object-cover opacity-40 hover:opacity-60 transition-opacity duration-1000" />
-              ) : (
-                <div className={`w-full h-full ${loading ? 'bg-white/5 animate-pulse' : 'bg-gradient-to-br from-white/5 to-black'}`} />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent" />
+            <div className="aspect-square glass-panel rounded-2xl overflow-hidden mb-8 relative group">
+              <img 
+                src={revenueImageUrl} 
+                alt="Art Asset Visualization" 
+                className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-all duration-1000 scale-[1.05] group-hover:scale-100" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6">
                  <div className="text-[10px] tracking-widest text-white/30 font-bold uppercase">Market Visualization</div>
-                 <div className="text-sm font-serif italic">The Commodity of Truth</div>
+                 <div className="text-sm font-serif italic text-white/80">The Commodity of Truth</div>
               </div>
             </div>
 
-            <div className="glass-panel p-6 rounded-xl border-l-4 border-white">
+            <div className="glass-panel p-6 rounded-xl border-l-4 border-white bg-white/[0.02]">
               <div className="text-white font-bold mb-2 tracking-widest text-[10px] uppercase">The 10% Clause</div>
               <p className="text-xs text-white/50 leading-relaxed">
                 Vanguard retains a 10% royalty on all secondary sales. This creates a long-tail revenue stream independent of box office cycles.
