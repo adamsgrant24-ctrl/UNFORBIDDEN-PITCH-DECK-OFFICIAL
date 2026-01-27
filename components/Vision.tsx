@@ -1,44 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { generateCinematicImage } from '../services/geminiService.ts';
+
+import React from 'react';
 
 const Vision: React.FC = () => {
-  const [visionImage, setVisionImage] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const sectionRef = useRef<HTMLElement>(null);
-  const initialized = useRef(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !initialized.current) {
-          initialized.current = true;
-          fetchImg();
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (sectionRef.current) observer.observe(sectionRef.current);
-
-    const fetchImg = async () => {
-      setLoading(true);
-      try {
-        const img = await generateCinematicImage(
-          "A conceptual architectural visualization of a glass prison floating in a dark, infinite void. Minimalist, neon blue accents, high contrast, cinematic lighting, anamorphic."
-        );
-        if (img) setVisionImage(img);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    return () => observer.disconnect();
-  }, []);
+  const visionImageUrl = "https://cdn.cundall.com/uploads/images/Blog/_large_image/397597/Getting-real-about-technology-part-1.webp?v=1744728306%2C0.5%2C0.5";
 
   return (
-    <section id="vision" ref={sectionRef} className="py-24 px-6 max-w-7xl mx-auto">
+    <section id="vision" className="py-24 px-6 max-w-7xl mx-auto">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
         <div className="lg:col-span-7">
           <h2 className="text-xs tracking-[0.4em] text-white/40 font-bold mb-4 uppercase">The Core Thesis</h2>
@@ -70,11 +37,11 @@ const Vision: React.FC = () => {
 
         <div className="lg:col-span-5 space-y-8">
           <div className="aspect-square glass-panel rounded-3xl overflow-hidden relative group">
-            {visionImage ? (
-              <img src={visionImage} alt="The Invincible Prison" className="w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity duration-1000" />
-            ) : (
-              <div className={`w-full h-full ${loading ? 'bg-white/5 animate-pulse' : 'bg-gradient-to-br from-blue-950 to-black'}`} />
-            )}
+            <img 
+              src={visionImageUrl} 
+              alt="The Invincible Prison" 
+              className="w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity duration-1000 scale-105 group-hover:scale-100" 
+            />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
             <div className="absolute bottom-8 left-8">
                <div className="text-[10px] tracking-widest text-white/40 mb-1 font-bold uppercase">Concept Audit</div>

@@ -1,41 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { generateCinematicImage } from '../services/geminiService.ts';
+
+import React from 'react';
 
 const TechnicalAudit: React.FC = () => {
-  const [techImage, setTechImage] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const sectionRef = useRef<HTMLElement>(null);
-  const initialized = useRef(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !initialized.current) {
-          initialized.current = true;
-          fetchImg();
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (sectionRef.current) observer.observe(sectionRef.current);
-
-    const fetchImg = async () => {
-      setLoading(true);
-      try {
-        const img = await generateCinematicImage(
-          "Macro shot of a high-end anamorphic ARRI camera lens, light hitting the glass elements, technical blue light flares, 35mm anamorphic aesthetic"
-        );
-        if (img) setTechImage(img);
-      } catch (e) {
-        console.error("Technical image failed", e);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    return () => observer.disconnect();
-  }, []);
+  const techImageUrl = "https://img.joomcdn.net/4716156626da890a0de193aa72f3c0a4c5819d9d_1024_1024.jpeg";
 
   const specs = [
     { label: "CAMERA SYSTEM", value: "ARRI ALEXA 35" },
@@ -47,7 +14,7 @@ const TechnicalAudit: React.FC = () => {
   ];
 
   return (
-    <section id="technical" ref={sectionRef} className="py-24 bg-black border-y border-white/5">
+    <section id="technical" className="py-24 bg-black border-y border-white/5">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-16">
           <div>
@@ -66,16 +33,21 @@ const TechnicalAudit: React.FC = () => {
             </div>
           </div>
           
-          <div className="relative group rounded-3xl overflow-hidden glass-panel aspect-[4/5]">
-            {techImage ? (
-              <img src={techImage} alt="Technical Rigour" className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-all duration-1000" />
-            ) : (
-              <div className={`w-full h-full ${loading ? 'bg-white/5 animate-pulse' : 'bg-gradient-to-b from-blue-900/10 to-black'}`} />
-            )}
+          <div className="relative group rounded-3xl overflow-hidden glass-panel aspect-[4/5] bg-neutral-900">
+            <img 
+              src={techImageUrl} 
+              alt="Technical Rigour" 
+              className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-all duration-1000" 
+            />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
             <div className="absolute bottom-8 left-8">
               <div className="text-[10px] tracking-widest text-white/40 mb-1 font-bold uppercase">Optic Audit</div>
               <div className="text-lg font-serif italic text-white/80">The 2.39:1 Inquiry</div>
+            </div>
+            
+            {/* Anamorphic aspect ratio indicator overlay */}
+            <div className="absolute top-6 left-6 border border-white/10 px-3 py-1 rounded text-[8px] tracking-[0.2em] text-white/40 uppercase font-mono">
+              2.39:1 Scope
             </div>
           </div>
         </div>
