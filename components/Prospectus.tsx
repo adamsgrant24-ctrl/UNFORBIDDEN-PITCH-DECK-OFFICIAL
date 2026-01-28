@@ -206,7 +206,7 @@ const Prospectus: React.FC<ProspectusProps> = ({ isSyncComplete }) => {
             </blockquote>
             <div className="h-8 w-[1px] bg-amber-500/50 mx-auto mb-6" />
             <cite className="text-[11px] tracking-[0.4em] text-amber-500 font-bold uppercase not-italic">
-              Grant Ashley Adams <span className="text-white/20 mx-2">/</span> Director
+              Aza-Khem <span className="text-white/20 mx-2">/</span> Director
             </cite>
           </div>
         </section>
