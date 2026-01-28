@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { generateCinematicImage } from '../services/geminiService.ts';
+import FullProspectusReader from './FullProspectusReader.tsx';
 
 const InvestorBrief: React.FC = () => {
   const [boardroomImage, setBoardroomImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isReaderOpen, setIsReaderOpen] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const initialized = useRef(false);
 
@@ -83,7 +85,7 @@ const InvestorBrief: React.FC = () => {
           <div className="glass-panel p-10 rounded-2xl group hover:border-white/20 transition-all">
             <h4 className="text-white font-bold mb-4 tracking-widest text-xs uppercase">Equity Buy-Back</h4>
             <p className="text-white/60 text-sm font-light leading-relaxed">
-              Vanguard reserves the right to buy back initial shares at a 1.5x - 2.0x premium once Phase II funding is secured, 
+              Vanguard Production House reserves the right to buy back initial seed investor shares at a 1.5x - 2x premium once Phase II funding is secured, 
               offering a guaranteed exit for early partners.
             </p>
           </div>
@@ -95,15 +97,23 @@ const InvestorBrief: React.FC = () => {
             We are selecting a limited number of partners to join Vanguard Production House in architecting a new era of Transcendental Noir.
           </p>
           <div className="flex flex-col md:flex-row items-center justify-center gap-6">
-            <button className="bg-white text-black px-10 py-4 rounded-full font-bold tracking-widest text-xs uppercase hover:bg-white/90 transition-all">
+            <button 
+              onClick={() => setIsReaderOpen(true)}
+              className="bg-white text-black px-10 py-4 rounded-full font-bold tracking-widest text-xs uppercase hover:bg-white/90 transition-all"
+            >
               Request Full Document
             </button>
-            <button className="border border-white/20 text-white px-10 py-4 rounded-full font-bold tracking-widest text-xs uppercase hover:bg-white/5 transition-all">
+            <button 
+              onClick={() => window.open('mailto:azakhem26@gmail.com')}
+              className="border border-white/20 text-white px-10 py-4 rounded-full font-bold tracking-widest text-xs uppercase hover:bg-white/5 transition-all"
+            >
               Contact Creative Director
             </button>
           </div>
         </div>
       </div>
+
+      {isReaderOpen && <FullProspectusReader onClose={() => setIsReaderOpen(false)} />}
     </section>
   );
 };
