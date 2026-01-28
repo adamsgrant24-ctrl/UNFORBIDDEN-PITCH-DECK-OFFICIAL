@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { generateCinematicImage, generateTrailerVoiceover, decodeBase64, decodeAudioData } from '../services/geminiService.ts';
 
@@ -70,7 +71,6 @@ const Trailer: React.FC<TrailerProps> = ({ isOpen, onClose }) => {
       try {
         audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
         
-        // Parallel load of first few scenes for fast start
         const loadPromises = scenes.map(async (scene, idx) => {
           const imgPromise = generateCinematicImage(scene.imagePrompt, "16:9");
           const audioPromise = generateTrailerVoiceover(scene.voiceover);
@@ -85,7 +85,6 @@ const Trailer: React.FC<TrailerProps> = ({ isOpen, onClose }) => {
           }
         });
 
-        // Wait for first 2 scenes to be ready before starting
         await Promise.all(loadPromises.slice(0, 2));
         setIsReady(true);
         setIsBuffering(false);
@@ -112,7 +111,6 @@ const Trailer: React.FC<TrailerProps> = ({ isOpen, onClose }) => {
     setCurrentSceneIdx(idx);
     setProgress(0);
 
-    // Play Audio
     const buffer = audioBuffers[idx];
     if (buffer && audioContextRef.current) {
       if (activeSourceRef.current) activeSourceRef.current.stop();
@@ -123,7 +121,6 @@ const Trailer: React.FC<TrailerProps> = ({ isOpen, onClose }) => {
       activeSourceRef.current = source;
     }
 
-    // Progress bar and next scene trigger
     const sceneDuration = scenes[idx].duration;
     const start = Date.now();
     const timer = setInterval(() => {
@@ -143,7 +140,6 @@ const Trailer: React.FC<TrailerProps> = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center overflow-hidden">
-      {/* Letterbox Bars */}
       <div className="absolute top-0 left-0 right-0 h-[12vh] bg-black z-50 border-b border-white/5 flex items-center justify-between px-10">
         <div className="text-[10px] tracking-[0.4em] font-bold text-white/30 uppercase">Inquiry Phase: Active</div>
         <button onClick={onClose} className="text-white/40 hover:text-white text-xs tracking-widest font-bold">CLOSE PROTOCOL</button>
@@ -154,7 +150,6 @@ const Trailer: React.FC<TrailerProps> = ({ isOpen, onClose }) => {
          </div>
       </div>
 
-      {/* Main Screen */}
       <div className="relative w-full aspect-[2.39/1] overflow-hidden">
         {isBuffering && (
           <div className="absolute inset-0 flex flex-col items-center justify-center z-40 bg-black">
@@ -206,11 +201,11 @@ const Trailer: React.FC<TrailerProps> = ({ isOpen, onClose }) => {
           animation: ken-burns 15s ease-out infinite alternate;
         }
         @keyframes text-reveal {
-          from { opacity: 0; transform: translateY(20px); filter: blur(10px); }
-          to { opacity: 1; transform: translateY(0); filter: blur(0); }
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
         }
         .animate-text-reveal {
-          animation: text-reveal 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          animation: text-reveal 2s ease-out forwards;
         }
       `}</style>
     </div>

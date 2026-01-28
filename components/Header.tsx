@@ -4,14 +4,17 @@ import React from 'react';
 interface HeaderProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
+  onSyncTrigger: () => void;
+  isSyncComplete: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
+const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, onSyncTrigger, isSyncComplete }) => {
   const navItems = [
     { id: 'vision', label: 'THE VISION' },
     { id: 'ensemble', label: 'ENSEMBLE' },
     { id: 'methodology', label: 'METHODOLOGY' },
     { id: 'revenue', label: 'REVENUE' },
+    { id: 'prospectus', label: 'PROSPECTUS' },
   ];
 
   return (
@@ -27,7 +30,7 @@ const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
           </div>
         </div>
 
-        <nav className="hidden md:flex space-x-8">
+        <nav className="hidden lg:flex items-center space-x-8">
           {navItems.map((item) => (
             <button
               key={item.id}
@@ -43,6 +46,18 @@ const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
               {item.label}
             </button>
           ))}
+          
+          <div className="h-4 w-[1px] bg-white/10 mx-2" />
+          
+          <button 
+            onClick={onSyncTrigger}
+            className="flex items-center gap-2 group cursor-pointer"
+          >
+            <div className={`w-1.5 h-1.5 rounded-full ${isSyncComplete ? 'bg-green-500' : 'bg-amber-500 animate-pulse'}`} />
+            <span className={`text-[9px] font-mono tracking-widest ${isSyncComplete ? 'text-white/60' : 'text-amber-500/80'} group-hover:text-white transition-colors uppercase font-bold`}>
+              {isSyncComplete ? 'REPOSITORY_SYNCED' : 'COMMIT_PENDING'}
+            </span>
+          </button>
         </nav>
 
         <button 
