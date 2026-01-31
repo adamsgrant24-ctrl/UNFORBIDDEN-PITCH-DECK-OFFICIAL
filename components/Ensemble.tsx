@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { generateCinematicImage } from '../services/geminiService.ts';
 
@@ -34,7 +33,7 @@ const characters: Character[] = [
     role: "The Kinetic Impulse",
     description: "The unexpected variable. She ignites the friction between the Vanguard Collective and the Unfettered Truth.",
     tagline: "TO CATALYZE",
-    imageUrl: "https://z-p3-scontent.fcpt1-1.fna.fbcdn.net/v/t39.30808-6/614252486_122292148502230881_1169823324019197250_n.jpg?stp=dst-jpg_s640x640_tt6&_nc_cat=110&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeF-XyslqllbU3dRQvFwsyxFZ-dGGoKCFnVn50YagoIWda5R3C3hxdMmsCyskP_h4TphVx80fzlbO9-c9PF27wbd&_nc_ohc=5Bo6IzO_NV4Q7kNvwFpFXgs&_nc_oc=AdlXdFjFmeTJTj7W209NuBVOqh6j6QU8j4QSYpZnSypiv_pT7d592ohStkuKKlY7-v0&_nc_zt=23&_nc_ht=z-p3-scontent.fcpt1-1.fna&_nc_gid=Tl6LNh14wq2Kpwk_pryoXg&oh=00_Afqbb06R9xFr6wQ006ObUtKgMxzzECbBPE2uLxYqKznBJw&oe=697AFAD8"
+    imageUrl: "https://scontent-jnb2-1.xx.fbcdn.net/v/t39.30808-6/614252486_122292148502230881_1169823324019197250_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeF-XyslqllbU3dRQvFwsyxFZ-dGGoKCFnVn50YagoIWda5R3C3hxdMmsCyskP_h4TphVx80fzlbO9-c9PF27wbd&_nc_ohc=0IUhHX7U9AMQ7kNvwFH6vFO&_nc_oc=Adlby04GrfgnWSABfL98NLYbvC0IA5o8Hwdh_7n0yqY30i-tgQwSxrlf-pikiebiYMQ&_nc_zt=23&_nc_ht=scontent-jnb2-1.xx&_nc_gid=VUk5jFzFIfLmNIb6rnOkVA&oh=00_AftWN7sBALRP44rz-oWPpubwQJ37abw0WGKTQy15ZTfFHQ&oe=6983C4D8"
   },
   {
     name: "THE MOTHER",
@@ -42,7 +41,7 @@ const characters: Character[] = [
     role: "The Gatekeeper",
     description: "The clinical, controlling force that manages Luke’s life. She is the architect of the Vanguard prison.",
     tagline: "TO ENCLOSE",
-    imageUrl: "https://z-p3-scontent.fcpt1-1.fna.fbcdn.net/v/t51.82787-15/574358563_18494699617075979_6964922146901599829_n.jpg?stp=dst-jpg_s640x640_tt6&_nc_cat=108&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeGK1-X5Q6X3Byzzf9yJcdcSDoRPhVbmvS8OhE-FVua9LyZPV9BLVIYOJYCq1a5grqFGqalH91W2LEdjst1zWepN&_nc_ohc=wHrhHW62pfEQ7kNvwEDgVD8&_nc_oc=Adn94vvbS2_0ZwXETxXUlcTgRVImnbjgU2M011Bq5OcIiV_XtPHH4xPw4dytSuEIEqc&_nc_zt=23&_nc_ht=z-p3-scontent.fcpt1-1.fna&_nc_gid=l9pCT7ASTBWLhPNFHqRNRQ&oh=00_AfqZtGWmhSU7Hyq2UHCfph-TUH_AlBceyPgakOU2cpEjFA&oe=697AFECE"
+    imageUrl: "https://www.zkhiphani.co.za/wp-content/uploads/2017/01/Pamela-Nomvete.jpg"
   },
   {
     name: "THE CRITIC",
@@ -97,7 +96,7 @@ const CharacterCard: React.FC<{ char: Character }> = ({ char }) => {
           src={displayUrl} 
           alt={char.name} 
           onError={handleImageError}
-          className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ${isSynthesized ? 'opacity-70 group-hover:opacity-100' : 'grayscale group-hover:grayscale-0 opacity-60 group-hover:opacity-80'} ${isGenerating ? 'opacity-0 scale-110' : 'scale-100'}`}
+          className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ${isSynthesized ? 'opacity-70 group-hover:opacity-100' : 'grayscale group-hover:grayscale-0 opacity-80 group-hover:opacity-100'} ${isGenerating ? 'opacity-0 scale-110' : 'scale-100'}`}
         />
       ) : (
         <div className="absolute inset-0 bg-white/5 flex items-center justify-center">
@@ -112,7 +111,7 @@ const CharacterCard: React.FC<{ char: Character }> = ({ char }) => {
         </div>
       )}
       
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10 pointer-events-none" />
       
       <div className="absolute bottom-0 left-0 right-0 p-8 z-20 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
         <div className="text-[10px] tracking-widest text-white/50 mb-2 font-bold uppercase">{char.role}</div>
@@ -121,7 +120,7 @@ const CharacterCard: React.FC<{ char: Character }> = ({ char }) => {
         <p className="text-xs text-white/60 mb-6 leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-500 max-h-0 group-hover:max-h-24 overflow-hidden">
           {char.description}
         </p>
-        <div className="inline-block border border-white/20 px-3 py-1 rounded text-[10px] tracking-widest text-white font-bold">
+        <div className="inline-block border border-white/20 px-3 py-1 rounded text-[10px] tracking-widest text-white font-bold uppercase">
           {char.tagline}
         </div>
       </div>
