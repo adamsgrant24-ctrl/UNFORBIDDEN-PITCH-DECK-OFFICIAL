@@ -256,7 +256,7 @@ const FullProspectusReader: React.FC<FullProspectusReaderProps> = ({ onClose }) 
             <h4 className="text-5xl font-serif italic mb-16 leading-tight">"The blueprints are drawn. The foundations are set. The audit is underway."</h4>
             <div className="flex flex-col items-center gap-6">
               <div className="text-[12px] tracking-[0.5em] text-white/40 mb-8 uppercase font-bold">We invite you to witness the awakening.</div>
-              <img src="https://media.licdn.com/dms/image/v2/D4D03AQE7mUo1_f06uA/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1684742586716?e=1744848000&v=beta&t=Nf0H06-KzQh07f_P1z8tT6N_P_p_P_p_P_p_P_p_P_p_P" alt="Aza-Khem" className="w-32 h-32 rounded-full grayscale border-2 border-white/10 mb-6 object-cover" />
+              <img src="https://media.licdn.com/dms/image/v2/D4E03AQGBjbIwBAWflQ/profile-displayphoto-crop_800_800/B4EZvDkMEFGcAM-/0/1768512603135?e=1772064000&v=beta&t=jKcEJnZM07ztuXc8tvnmivaTl2PG-fw8gTTWPDNjqNw" alt="Aza-Khem" className="w-32 h-32 rounded-full grayscale border-2 border-white/10 mb-6 object-cover" />
               <div className="text-lg font-bold text-white">AZA-KHEM</div>
               <div className="text-[10px] tracking-[0.4em] text-white/40 uppercase font-bold mb-12">Director & Lead Architect</div>
               
