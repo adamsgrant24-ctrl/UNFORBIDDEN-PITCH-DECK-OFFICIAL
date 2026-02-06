@@ -33,7 +33,7 @@ const characters: Character[] = [
     role: "The Kinetic Impulse",
     description: "The unexpected variable. She ignites the friction between the Vanguard Collective and the Unfettered Truth.",
     tagline: "TO CATALYZE",
-    imageUrl: "https://scontent-jnb2-1.xx.fbcdn.net/v/t39.30808-6/614252486_122292148502230881_1169823324019197250_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeF-XyslqllbU3dRQvFwsyxFZ-dGGoKCFnVn50YagoIWda5R3C3hxdMmsCyskP_h4TphVx80fzlbO9-c9PF27wbd&_nc_ohc=0IUhHX7U9AMQ7kNvwFH6vFO&_nc_oc=Adlby04GrfgnWSABfL98NLYbvC0IA5o8Hwdh_7n0yqY30i-tgQwSxrlf-pikiebiYMQ&_nc_zt=23&_nc_ht=scontent-jnb2-1.xx&_nc_gid=VUk5jFzFIfLmNIb6rnOkVA&oh=00_AftWN7sBALRP44rz-oWPpubwQJ37abw0WGKTQy15ZTfFHQ&oe=6983C4D8"
+    imageUrl: "https://hips.hearstapps.com/hmg-prod/images/gettyimages-2235578658-68dbfd9290ff9.jpg?resize=980:*"
   },
   {
     name: "THE MOTHER",
@@ -72,9 +72,13 @@ const CharacterCard: React.FC<{ char: Character }> = ({ char }) => {
     triggerRef.current = true;
     setIsGenerating(true);
     
+    // Determine ethnicity descriptor for prompt enhancement
+    const isBlackCharacter = ["LUKE", "ZOLA", "THE MOTHER"].includes(char.name);
+    const descriptor = isBlackCharacter ? (char.name === "THE MOTHER" ? "regal Black woman" : "handsome Black man") : "person";
+
     try {
       const aiImage = await generateCinematicImage(
-        `High-end cinematic portrait of the character ${char.name}, played by ${char.talent}. Noir aesthetic, moody dramatic lighting, ${char.role}, transcendental film still.`,
+        `High-end cinematic portrait of a ${descriptor} as the character ${char.name}, played by ${char.talent}. Noir aesthetic, moody dramatic lighting, ${char.role}, transcendental film still.`,
         "3:4"
       );
       
